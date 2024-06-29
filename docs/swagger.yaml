@@ -1,0 +1,146 @@
+basePath: /
+definitions:
+  middleware.ErrorResponse:
+    properties:
+      message:
+        type: string
+    type: object
+  middleware.LimitData:
+    description: Struct to store rate limiter data
+    properties:
+      block_duration:
+        type: integer
+      id:
+        type: string
+      key:
+        type: string
+      max_requests:
+        type: integer
+      seconds:
+        type: integer
+    type: object
+  middleware.LimitDataInput:
+    description: Struct to store rate limiter data for Swagger documentation
+    properties:
+      block_duration:
+        type: integer
+      max_requests:
+        type: integer
+      seconds:
+        type: integer
+    type: object
+  server.AuthTokenResponse:
+    properties:
+      token:
+        type: string
+    type: object
+  server.IndexResponse:
+    properties:
+      message:
+        type: string
+    type: object
+host: localhost:8080
+info:
+  contact:
+    email: tawan.tls43@gmail.com
+    name: Tawan Silva
+    url: https://www.linkedin.com/in/tawan-silva-684b581b7/
+  description: Rate Limiter API with Redis
+  license:
+    name: Rate Limiter License
+    url: http://www.ratelimiter.com.br
+  termsOfService: http://swagger.io/terms/
+  title: Rate Limiter API Example
+  version: "1.0"
+paths:
+  /get-all-rate-limiter:
+    get:
+      consumes:
+      - application/json
+      description: get all rate limiter settings
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Successfully retrieved all rate limiter settings
+          schema:
+            items:
+              $ref: '#/definitions/middleware.LimitData'
+            type: array
+        "500":
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/middleware.ErrorResponse'
+      summary: Get all rate limiter settings
+      tags:
+      - rate limiter
+  /home:
+    get:
+      consumes:
+      - application/json
+      description: get index
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Welcome to the rate limited index page!
+          schema:
+            $ref: '#/definitions/server.IndexResponse'
+      security:
+      - ApiKeyAuth: []
+      summary: Welcome to the rate limited index page!
+      tags:
+      - home
+  /token:
+    get:
+      consumes:
+      - application/json
+      description: get authToken
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: token detail
+          schema:
+            $ref: '#/definitions/server.AuthTokenResponse'
+      summary: Generates a new auth token
+      tags:
+      - token
+  /update-rate-limiter/:
+    put:
+      consumes:
+      - application/json
+      description: update rate limiter settings for a specific key (ip or token)
+      parameters:
+      - description: Update rate limiter settings
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/middleware.LimitDataInput'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Successfully updated rate limiter settings
+          schema:
+            $ref: '#/definitions/middleware.LimitDataInput'
+        "400":
+          description: Invalid request body
+          schema:
+            $ref: '#/definitions/middleware.ErrorResponse'
+        "500":
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/middleware.ErrorResponse'
+      security:
+      - ApiKeyAuth: []
+      summary: Update rate limiter settings
+      tags:
+      - rate limiter
+securityDefinitions:
+  ApiKeyAuth:
+    in: header
+    name: API_KEY
+    type: apiKey
+swagger: "2.0"
