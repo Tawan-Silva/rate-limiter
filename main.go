@@ -2,6 +2,7 @@ package main
 
 import (
 	"log"
+	"os"
 	"ratelimiter/configs"
 	_ "ratelimiter/docs"
 	"ratelimiter/middleware"
@@ -49,5 +50,9 @@ func main() {
 }
 
 func ConnectToRedis() *ratelimiter.RedisStore {
-	return ratelimiter.NewRedisStore("redis:6379")
+	redisAddress := os.Getenv("REDIS_ADDRESS")
+	if redisAddress == "" {
+		redisAddress = "localhost:6379"
+	}
+	return ratelimiter.NewRedisStore(redisAddress)
 }

@@ -11,3 +11,12 @@ services:
     depends_on:
       - redis
     command: sh -c "swag init && go run main.go"
+    environment:
+      - REDIS_ADDRESS=redis:6379
+  test:
+    build: .
+    depends_on:
+      - redis
+    command: sh -c "go test -v ./..."
+    environment:
+      - REDIS_ADDRESS=redis:6379

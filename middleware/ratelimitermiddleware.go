@@ -189,12 +189,14 @@ func (m *RateLimiterMiddleware) isTokenValid(key string, w http.ResponseWriter) 
 	})
 
 	if err != nil || !token.Valid {
+		w.WriteHeader(http.StatusUnauthorized)
 		m.writeErrorResponse(w, "Invalid token")
 		return false
 	}
 
 	claims := token.Claims.(*jwt.StandardClaims)
 	if time.Unix(claims.ExpiresAt, 0).Before(time.Now()) {
+		w.WriteHeader(http.StatusUnauthorized)
 		m.writeErrorResponse(w, "Token expired")
 		return false
 	}
@@ -207,7 +209,6 @@ func (m *RateLimiterMiddleware) writeErrorResponse(w http.ResponseWriter, messag
 		Message: message,
 	}
 	w.Header().Set("Content-Type", "application/json")
-	w.WriteHeader(http.StatusUnauthorized)
 	_ = json.NewEncoder(w).Encode(response)
 }
 

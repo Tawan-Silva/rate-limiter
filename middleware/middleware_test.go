@@ -4,6 +4,7 @@ import (
 	"github.com/dgrijalva/jwt-go"
 	"net/http"
 	"net/http/httptest"
+	"os"
 	"ratelimiter/configs"
 	"ratelimiter/pkg/ratelimiter"
 	"testing"
@@ -12,7 +13,7 @@ import (
 
 func TestRateLimiter(t *testing.T) {
 	configs.LoadConfig()
-	store := ratelimiter.NewRedisStore("localhost:6379")
+	store := ratelimiter.NewRedisStore(GetRemoteAddr())
 	rateLimiter := ratelimiter.NewRateLimiter(store)
 	middleware := NewRateLimiterMiddleware(rateLimiter)
 
@@ -116,4 +117,13 @@ func TestRateLimiter(t *testing.T) {
 			t.Errorf("handler returned wrong status code: got %v want %v", status, http.StatusOK)
 		}
 	})
+}
+
+func GetRemoteAddr() string {
+	redisAddress := os.Getenv("REDIS_ADDRESS")
+	if redisAddress == "" {
+		redisAddress = "localhost:6379"
+	}
+
+	return redisAddress
 }

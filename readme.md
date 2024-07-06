@@ -32,3 +32,13 @@ Para uma melhor visualização e gerenciamento do Redis, você pode instalar o R
 ## Configuração
 
 As configurações da aplicação podem ser ajustadas no arquivo `.env`. Este arquivo contém várias variáveis de ambiente que são usadas para configurar o comportamento da aplicação. As variáveis de ambiente incluem as configurações para a limitação de taxa, bem como a chave secreta usada para a autenticação.
+
+## Executando os Testes
+
+1. Certifique-se de que o Docker e o Docker Compose estão instalados em sua máquina.
+2. Navegue até o diretório do projeto.
+3. Execute o comando `docker-compose up --abort-on-container-exit test`.
+
+Este comando inicia o serviço `test`, que por sua vez inicia o serviço `redis` no qual depende. A opção `--abort-on-container-exit` faz com que o Docker Compose pare todos os contêineres assim que o contêiner do serviço `test` for encerrado.
+
+Por favor, note que este método executa os testes em um contêiner separado do contêiner da aplicação.
